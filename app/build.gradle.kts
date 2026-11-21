@@ -1,41 +1,24 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
     id("com.chaquo.python")
 }
 
 android {
-    namespace = "dedeadend.dterminal"
+    namespace = "com.yin.term"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "dedeadend.dterminal"
+        applicationId = "com.yin.term"
         minSdk = 30
         targetSdk = 36
-        versionCode = 20
-        versionName = "2.0"
+        versionCode = 1
+        versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    flavorDimensions.add("abi")
-
-    productFlavors {
-        create("phone") {
-            dimension = "abi"
-            ndk {
-                abiFilters.add("arm64-v8a")
-            }
-        }
-        create("emulator") {
-            dimension = "abi"
-            ndk {
-                abiFilters.add("x86_64")
-            }
+        ndk {
+            abiFilters += "arm64-v8a"
         }
     }
 
@@ -48,13 +31,31 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     buildFeatures {
         compose = true
+        buildConfig = false
+    }
+
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/*.kotlin_module",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE*",
+                "META-INF/NOTICE*",
+                "kotlin/**"
+            )
+        }
     }
 }
 
@@ -67,31 +68,19 @@ chaquopy {
     }
 }
 
-
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.navigation.compose)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    ksp(libs.dagger.hilt.android.compiler)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.core.splashscreen)
+    testImplementation(libs.junit)
 }
